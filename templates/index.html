@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <title>Condosa</title>
+</head>
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">CONDOSA | Generar recibos de mantenimiento</span>
+        </div>
+    </nav>
+    <h5><BR>- 1. FIJAR MONTO DE CAJA CHICA Y MONTO MÍNIMO DE MANTENIMIENTO</h5>
+    <div class="container text-center">
+        <div class="row align-items-start">
+            <div class="col">
+                <h5><br>Gastos del mes anterior</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Proveedor</th>
+                        <th scope="col">Monto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for costo in costos %}
+                            <tr>
+                                <td>{{ costo.descripcion }}</td>
+                                <td>{{ costo.proveedor }}</td>
+                                <td>{{ costo.monto }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col">
+                <div class="container text-center">
+                    <div class="row align-items-start">
+                        <div class="col"></div>
+                        <div class="col">
+                            <p><br><br>Caja chica y monto mínimo de mantenimiento</p>
+                            <button type="button" class="btn btn-primary" href="#">Calcular</button>
+                            <br><br>
+                            <table class="table">
+                                <tbody>
+                                    <tr>
+                                        <td>Monto de caja chica</td>
+                                        <td>10000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Monto mínimo de mantenimiento</td>
+                                        <td>20000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h5><br><br>- 2. GENERAR RECIBOS DE MANTENIMIENTO</h5>
+    <div class="container text-center">
+        <div class="row align-items-start">
+            <div class="col">
+                <div class="dropdown">
+                    <br>
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Seleccione a un cliente
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Persona 1</a></li>
+                        <li><a class="dropdown-item" href="#">Persona 2</a></li>
+                        <li><a class="dropdown-item" href="#">Persona 3</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+</body>
+</html>

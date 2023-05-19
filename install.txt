@@ -1,0 +1,30 @@
+Ejemplo de uso de SQLServer con Flask
+
+APP:
+1. Descargar el proyecto desde github
+2. Abra la carpeta
+3. Cree y active el entorno virtual
+    virtualenv venv
+    .\venv\Scripts\activate
+4. Instale todas las dependencias
+    pip install -r requirements.txt
+5. Cambie las credenciales de su base de datos en: app.py > def connection()
+    → Cambie las variables y/o descomente la línea de conexión (cstr) pertinente
+6. Inicie el servicio con cualquiera de los siguientes comandos
+    flask run
+    python app.py
+
+
+BASE DE DATOS (SqlServer)
+1. Cree una base de datos llamada 'CarSales'
+2. Ejecute el siguiente Script dentro de la base de datos creada
+    CREATE TABLE [dbo].[TblCars](
+      [ID] [int] NOT NULL,
+      [Name] [varchar](100) NULL,
+      [Year] [int] NOT NULL,
+      [Price] [float] NOT NULL)
+    INSERT INTO TblCars VALUES (1, 'Toyota Camry', 2018, 2000)
+    INSERT INTO TblCars VALUES (2, 'Honda Civic', 2019, 2200)
+    INSERT INTO TblCars VALUES (3, 'Chevrolet Silverado', 2017, 1800)
+    INSERT INTO TblCars VALUES (4, 'Ford F-150', 2020, 2500)
+    INSERT INTO TblCars VALUES (5, 'Nissan Altima', 2021, 3000)
