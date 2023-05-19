@@ -1,0 +1,238 @@
+-- Crear tablas
+create table ADMINISTRADOR_COND(
+  IDAdministrador int not null,
+  numeroCell int not null,
+  correoElectronico varchar(50) not null,
+  constraint pk_IDAdministrador primary key (IDAdministrador)
+);
+
+create table PROVEEDOR(
+  IDProveedor int not null,
+  nombre varchar(30) not null,
+  constraint pk_IDProveedor primary key (IDProveedor)
+);
+
+create table CONDOMINIO(
+  IDCondominio int not null,
+  IDAdministrador int not null,
+  nombre varchar(30) not null,
+  categoria varchar(30) not null,
+  direccion varchar(50) not null,
+  numcasas int not null,
+  constraint pk_IDCondominio primary key (IDCondominio),
+  constraint fk_IDAdministrador foreign key (IDAdministrador) references ADMINISTRADOR_COND(IDAdministrador)
+);
+
+create table CASA(
+  IDCasa int not null,
+  IDCondominio int not null,
+  bloque varchar(15) not null,
+  areaCasa int not null,
+  areaCochera int not null,
+  categoriaPago varchar(30) not null,
+  habitantes int not null,
+  numPiso int not null,
+  constraint pk_IDCasa primary key (IDCasa),
+  constraint fk_IDCondominio foreign key (IDCondominio) references CONDOMINIO(IDCondominio)
+);
+
+create table CLIENTE(
+  IDCliente int not null,
+  IDCasa int not null,
+  nombres varchar(50) not null,
+  apPaterno varchar(30) not null,
+  apMaterno varchar(30) not null,
+  dni int not null,
+  constraint pk_IDCliente primary key (IDCliente),
+  constraint fk_IDCasa foreign key (IDCasa) references CASA(IDCasa)
+);
+
+create table GASTO_MANTENIMIENTO(
+  IDGastoMant int not null,
+  IDProveedor int not null,
+  numComprobante int not null,
+  conceptoGasto varchar(30) not null,
+  descGasto varchar(30) not null,
+  montoGasto  decimal(9,3) not null,
+  constraint pk_IDGastoMant primary key (IDGastoMant),
+  constraint fk_IDProveedor foreign key (IDProveedor) references PROVEEDOR(IDProveedor)
+);
+
+create table CUOTA_MANTENIMIENTO(
+  IDCuotaMant int not null,
+  montoMinimo decimal(10,3) not null,
+  montoCajaChica decimal(10,3) not null,
+  valorCuota decimal(10,3) not null,
+  estado varchar(15) not null,
+  constraint pk_IDCuotaMant primary key (IDCuotaMant)
+);
+
+create table RECIBO_MANTENIMIENTO(
+  IDRecibo int not null,
+  fechaEmision date not null,
+  fechaVencimiento date not null,
+  constraint pk_IDRecibo primary key (IDRecibo)
+);
+
+create table GASTO__RECIBO(
+  IDGastoMant int not null,
+  IDRecibo int not null,
+  constraint fk_IDGastoMant foreign key (IDGastoMant) references GASTO_MANTENIMIENTO(IDGastoMant),
+  constraint fk_IDRecibo foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
+);
+
+create table CLIENTE__RECIBO(
+  IDCliente int not null,
+  IDRecibo int not null,
+  constraint fk_IDCliente_R foreign key (IDCliente) references CLIENTE(IDCliente),
+  constraint fk_IDRecibo_Cli foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
+);
+
+create table CUOTA__RECIBO(
+  IDCuotaMant int not null,
+  IDRecibo int not null,
+  constraint fk_IDCuotaMant_R foreign key (IDCuotaMant) references CUOTA_MANTENIMIENTO(IDCuotaMant),
+  constraint fk_IDRecibo_C foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
+);
+
+-- Crear secuencias
+create sequence INCREMENTO_IDADMIN start with 1000 increment by 1;
+create sequence INCREMENTO_IDProveedor start with 2000 increment by 1;
+create sequence INCREMENTO_IDCondominio start with 3000 increment by 1;
+create sequence INCREMENTO_IDCasa start with 4000 increment by 1;
+create sequence INCREMENTO_IDCliente start with 5000 increment by 1;
+create sequence INCREMENTO_IDGastoMant start with 6000 increment by 1;
+create sequence INCREMENTO_IDCuotaMant start with 7000 increment by 1;
+create sequence INCREMENTO_IDRecibo start with 8000 increment by 1;
+
+	
+
+		--CAMBIAR SECUENCIAS (SI ASI SE QUISIERA) 
+
+		ALTER SEQUENCE INCREMENTO_IDADMIN RESTART WITH 1000;
+		ALTER SEQUENCE INCREMENTO_IDProveedor RESTART WITH 2000;
+		ALTER SEQUENCE INCREMENTO_IDCondominio RESTART WITH 3000;
+		ALTER SEQUENCE INCREMENTO_IDCasa RESTART WITH 4000;
+		ALTER SEQUENCE INCREMENTO_IDCliente RESTART WITH 5000;
+		ALTER SEQUENCE INCREMENTO_IDGastoMant RESTART WITH 6000;
+		ALTER SEQUENCE INCREMENTO_IDCuotaMant RESTART WITH 7000;
+		ALTER SEQUENCE INCREMENTO_IDRecibo RESTART WITH 8000;
+		
+		
+		
+--TRIGGERS (ESTOS SIRVEN PARA CREAR A LOS DATOS,DONDE EL PARAMETRO DEL ID SEA "NULL")
+<
+
+create trigger TRI_ADMIN_COND
+on ADMINISTRADOR_COND
+instead of insert
+as
+begin
+  insert into ADMINISTRADOR_COND (IDAdministrador, numeroCell, correoElectronico)
+  select NEXT VALUE FOR INCREMENTO_IDADMIN, inserted.numeroCell, inserted.correoElectronico
+  from inserted;
+end;
+
+create trigger TRI_PROVEEDOR
+on PROVEEDOR
+instead of insert
+as
+begin
+  insert into PROVEEDOR (IDProveedor, nombre)
+  select NEXT VALUE FOR INCREMENTO_IDProveedor, inserted.nombre
+  from inserted;
+end;
+
+create trigger TRI_CONDOMINIO
+on CONDOMINIO
+instead of insert
+as
+begin
+  insert into CONDOMINIO (IDCondominio, IDAdministrador, nombre, categoria, direccion, numcasas)
+  select NEXT VALUE FOR INCREMENTO_IDCondominio, inserted.IDAdministrador, inserted.nombre, inserted.categoria, inserted.direccion, inserted.numcasas
+  from inserted;
+end;
+
+create trigger TRI_CASA
+on CASA
+instead of insert
+as
+begin
+  insert into CASA (IDCasa, IDCondominio, bloque, areaCasa, areaCochera, categoriaPago, habitantes, numPiso)
+  select NEXT VALUE FOR INCREMENTO_IDCasa, inserted.IDCondominio, inserted.bloque, inserted.areaCasa, inserted.areaCochera, inserted.categoriaPago, inserted.habitantes, inserted.numPiso
+  from inserted;
+end;
+
+create trigger TRI_CLIENTE
+on CLIENTE
+instead of insert
+as
+begin
+  insert into CLIENTE (IDCliente, IDCasa, nombres, apPaterno, apMaterno, dni)
+  select NEXT VALUE FOR INCREMENTO_IDCliente, inserted.IDCasa, inserted.nombres, inserted.apPaterno, inserted.apMaterno, inserted.dni
+  from inserted;
+end;
+
+create trigger TRI_GASTO_MANTENIMIENTO
+on GASTO_MANTENIMIENTO
+instead of insert
+as
+begin
+  insert into GASTO_MANTENIMIENTO (IDGastoMant, IDProveedor, numComprobante, conceptoGasto, descGasto, montoGasto)
+  select NEXT VALUE FOR INCREMENTO_IDGastoMant, inserted.IDProveedor, inserted.numComprobante, inserted.conceptoGasto, inserted.descGasto, inserted.montoGasto
+  from inserted;
+end;
+
+create trigger TRI_CUOTA_MANTENIMIENTO
+on CUOTA_MANTENIMIENTO
+instead of insert
+as
+begin
+  insert into CUOTA_MANTENIMIENTO (IDCuotaMant, montoMinimo, montoCajaChica, valorCuota, estado)
+  select NEXT VALUE FOR INCREMENTO_IDCuotaMant, inserted.montoMinimo, inserted.montoCajaChica, inserted.valorCuota, inserted.estado
+  from inserted;
+end;
+
+create trigger TRI_RECIBO_MANTENIMIENTO
+on RECIBO_MANTENIMIENTO
+instead of insert
+as
+begin
+  insert into RECIBO_MANTENIMIENTO (IDRecibo, fechaEmision, fechaVencimiento)
+  select NEXT VALUE FOR INCREMENTO_IDRecibo, inserted.fechaEmision, inserted.fechaVencimiento
+  from inserted;
+end;
+
+
+
+
+
+
+--INSERTAR DATOS
+
+-- Insertar datos en PROVEEDOR
+INSERT INTO PROVEEDOR (IDProveedor, nombre)
+VALUES
+(null, 'CONDOSA'),
+(null, 'SEDAPAL'),
+(null, 'ADMINISTRACIÓN CONDOSA'),
+(null, 'TELEFONICA'),
+(null, 'ENEL');
+
+--Insertar datos en ADMINISTRADOR_COND
+INSERT INTO ADMINISTRADOR_COND (IDAdministrador, numeroCell, correoElectronico)
+VALUES
+(null, 123456789, 'correo1@gmail.com'),
+(null, 987654321, 'correo2@gmail.com'),
+(null, 159482673, 'correo3@gmail.com'),
+(null, 951846237, 'correo3@gmail.com'),
+(null, 847512369, 'correo5@gmail.com');
+
+-- Insertar datos en CONDOMINIO
+INSERT INTO CONDOMINIO (IDCondominio, IDAdministrador, nombre, categoria, direccion, numcasas)
+VALUES
+(null, 1000, 'Condominio A', 'P1', 'Dirección 1', 5),
+(null, 1001, 'Condominio B', 'P2', 'Dirección 2', 4),
+(null, 1002, 'Condominio C', 'P1', 'Dirección 3', 3),
+(null, 1002, 'Condominio D', 'P2', 'Dirección 4', 4),
+(null, 1004, 'Condominio E', 'P1', 'Dirección 5', 2);
