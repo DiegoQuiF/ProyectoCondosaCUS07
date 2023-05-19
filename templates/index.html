@@ -30,8 +30,8 @@
                         {% for costo in costos %}
                             <tr>
                                 <td>{{ costo.descripcion }}</td>
-                                <td>{{ costo.proveedor }}</td>
-                                <td>{{ costo.monto }}</td>
+                                <td>{{ costo.nombre }}</td>
+                                <td>{{ costo.totalCosto }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -43,17 +43,21 @@
                         <div class="col"></div>
                         <div class="col">
                             <p><br><br>Caja chica y monto mínimo de mantenimiento</p>
-                            <button type="button" class="btn btn-primary" href="#">Calcular</button>
+                            <a class="btn btn-primary" href="calculado">Calculara</a>
                             <br><br>
                             <table class="table">
                                 <tbody>
                                     <tr>
                                         <td>Monto de caja chica</td>
-                                        <td>10000</td>
+                                        {% for monto in montos %}
+                                        <td>{{monto.caja}}</td>
+                                        {% endfor %}
                                     </tr>
                                     <tr>
                                         <td>Monto mínimo de mantenimiento</td>
-                                        <td>20000</td>
+                                        {% for monto in montos %}
+                                        <td>{{monto.monto}}</td>
+                                        {% endfor %}
                                     </tr>
                                 </tbody>
                             </table>
@@ -73,9 +77,9 @@
                         Seleccione a un cliente
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Persona 1</a></li>
-                        <li><a class="dropdown-item" href="#">Persona 2</a></li>
-                        <li><a class="dropdown-item" href="#">Persona 3</a></li>
+                        {% for cliente in clientes %}
+                            <li><a class="dropdown-item" href="/recibo/{{ cliente.idCliente }}">{{ cliente.nombreCompleto }}</a></li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>

@@ -1,238 +1,166 @@
--- Crear tablas
-create table ADMINISTRADOR_COND(
-  IDAdministrador int not null,
-  numeroCell int not null,
-  correoElectronico varchar(50) not null,
-  constraint pk_IDAdministrador primary key (IDAdministrador)
+--Crear la base de datos
+create database E_CONDOSA
+
+--En E_CONDONSA
+--Crear las tablas:
+create table CLIENTE(
+  idCliente int not null,
+  nombre varchar(50) not null,
+  aPaterno varchar(50) not null,
+  aMaterno varchar(50) not null,
+  nroDNI int not null unique,
+  constraint pk_idCliente primary key (idCliente)
+);
+
+create table CASA_DEPARTAMENTO(
+  idDomicilio int not null,
+  area int not null,
+  idCliente int,
+  direccion varchar(150) not null,
+  categoria varchar(5) not null,
+  habitantes int not null,
+  constraint pk_idDomicilio primary key (idDomicilio),
+  constraint fk_idCliente foreign key (idCliente) references CLIENTE(idCliente)
 );
 
 create table PROVEEDOR(
-  IDProveedor int not null,
-  nombre varchar(30) not null,
-  constraint pk_IDProveedor primary key (IDProveedor)
+  idProveedor int not null,
+  nombre varchar(50) not null,
+  constraint pk_idProveedor primary key (idProveedor)
 );
 
-create table CONDOMINIO(
-  IDCondominio int not null,
-  IDAdministrador int not null,
-  nombre varchar(30) not null,
-  categoria varchar(30) not null,
-  direccion varchar(50) not null,
-  numcasas int not null,
-  constraint pk_IDCondominio primary key (IDCondominio),
-  constraint fk_IDAdministrador foreign key (IDAdministrador) references ADMINISTRADOR_COND(IDAdministrador)
+create table MANTENIMIENTO(
+  idMantenimiento int not null,
+  idProveedor int not null,
+  descripcion varchar(50) not null,
+  totalCosto float not null,
+  fecha date not null,
+  constraint pk_idMantenimiento primary key (idMantenimiento),
+  constraint fk_idProveedor foreign key (idProveedor) references PROVEEDOR(idProveedor)
 );
 
-create table CASA(
-  IDCasa int not null,
-  IDCondominio int not null,
-  bloque varchar(15) not null,
-  areaCasa int not null,
-  areaCochera int not null,
-  categoriaPago varchar(30) not null,
-  habitantes int not null,
-  numPiso int not null,
-  constraint pk_IDCasa primary key (IDCasa),
-  constraint fk_IDCondominio foreign key (IDCondominio) references CONDOMINIO(IDCondominio)
-);
-
-create table CLIENTE(
-  IDCliente int not null,
-  IDCasa int not null,
-  nombres varchar(50) not null,
-  apPaterno varchar(30) not null,
-  apMaterno varchar(30) not null,
-  dni int not null,
-  constraint pk_IDCliente primary key (IDCliente),
-  constraint fk_IDCasa foreign key (IDCasa) references CASA(IDCasa)
-);
-
-create table GASTO_MANTENIMIENTO(
-  IDGastoMant int not null,
-  IDProveedor int not null,
-  numComprobante int not null,
-  conceptoGasto varchar(30) not null,
-  descGasto varchar(30) not null,
-  montoGasto  decimal(9,3) not null,
-  constraint pk_IDGastoMant primary key (IDGastoMant),
-  constraint fk_IDProveedor foreign key (IDProveedor) references PROVEEDOR(IDProveedor)
-);
-
-create table CUOTA_MANTENIMIENTO(
-  IDCuotaMant int not null,
-  montoMinimo decimal(10,3) not null,
-  montoCajaChica decimal(10,3) not null,
-  valorCuota decimal(10,3) not null,
-  estado varchar(15) not null,
-  constraint pk_IDCuotaMant primary key (IDCuotaMant)
-);
-
-create table RECIBO_MANTENIMIENTO(
-  IDRecibo int not null,
+create table RECIBO(
+  idRecibo int not null,
+  idDomicilio int not null,
+  idMantenimiento int not null,
+  montoMantenimiento float not null,
   fechaEmision date not null,
   fechaVencimiento date not null,
-  constraint pk_IDRecibo primary key (IDRecibo)
+  constraint fk_idDomicilioRe foreign key (idDomicilio) references CASA_DEPARTAMENTO(idDomicilio),
+  constraint fk_idMantenimiento foreign key (idMantenimiento) references MANTENIMIENTO(idMantenimiento),
 );
 
-create table GASTO__RECIBO(
-  IDGastoMant int not null,
-  IDRecibo int not null,
-  constraint fk_IDGastoMant foreign key (IDGastoMant) references GASTO_MANTENIMIENTO(IDGastoMant),
-  constraint fk_IDRecibo foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
-);
+--Insertamos datos:
+INSERT INTO [dbo].[CLIENTE]([idCliente],[nombre],[aPaterno],[aMaterno],[nroDNI])
+     VALUES(100,'Diego','Perez','Soto','12345678');
+INSERT INTO [dbo].[CLIENTE]([idCliente],[nombre],[aPaterno],[aMaterno],[nroDNI])
+     VALUES(101,'Juan','Rodriguez','Ramos','87654321');
+INSERT INTO [dbo].[CLIENTE]([idCliente],[nombre],[aPaterno],[aMaterno],[nroDNI])
+     VALUES(102,'Maria','Soto','Flores','85236741');
+INSERT INTO [dbo].[CLIENTE]([idCliente],[nombre],[aPaterno],[aMaterno],[nroDNI])
+     VALUES(103,'Esteban','Quintana','Soto','10236547');
+INSERT INTO [dbo].[CLIENTE]([idCliente],[nombre],[aPaterno],[aMaterno],[nroDNI])
+     VALUES(104,'Paola','Paredes','Vilca','76543210');
 
-create table CLIENTE__RECIBO(
-  IDCliente int not null,
-  IDRecibo int not null,
-  constraint fk_IDCliente_R foreign key (IDCliente) references CLIENTE(IDCliente),
-  constraint fk_IDRecibo_Cli foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
-);
+INSERT INTO [dbo].[CASA_DEPARTAMENTO]([idDomicilio],[area],[idCliente],[direccion],[categoria],[habitantes])
+     VALUES(20000,40,100,'Condominios CONDOSA - Área C Dpto 300','P1',3)
+INSERT INTO [dbo].[CASA_DEPARTAMENTO]([idDomicilio],[area],[idCliente],[direccion],[categoria],[habitantes])
+     VALUES(20001,30,101,'Condominios CONDOSA - Área C Dpto 301','P2',4)
+INSERT INTO [dbo].[CASA_DEPARTAMENTO]([idDomicilio],[area],[idCliente],[direccion],[categoria],[habitantes])
+     VALUES(20002,50,102,'Condominios CONDOSA - Área C Dpto 302','P1',3)
+INSERT INTO [dbo].[CASA_DEPARTAMENTO]([idDomicilio],[area],[idCliente],[direccion],[categoria],[habitantes])
+     VALUES(20003,40,103,'Condominios CONDOSA - Área A Dpto 100','P2',4)
+INSERT INTO [dbo].[CASA_DEPARTAMENTO]([idDomicilio],[area],[idCliente],[direccion],[categoria],[habitantes])
+     VALUES(20004,70,104,'Condominios CONDOSA - Área B Dpto 200','P1',2)
 
-create table CUOTA__RECIBO(
-  IDCuotaMant int not null,
-  IDRecibo int not null,
-  constraint fk_IDCuotaMant_R foreign key (IDCuotaMant) references CUOTA_MANTENIMIENTO(IDCuotaMant),
-  constraint fk_IDRecibo_C foreign key (IDRecibo) references RECIBO_MANTENIMIENTO(IDRecibo)
-);
+INSERT INTO [dbo].[PROVEEDOR]([idProveedor],[nombre])
+     VALUES(57100,'CONDOSA')
+INSERT INTO [dbo].[PROVEEDOR]([idProveedor],[nombre])
+     VALUES(57101,'SEDAPAL')
+INSERT INTO [dbo].[PROVEEDOR]([idProveedor],[nombre])
+     VALUES(57102,'ADMIN. CONDOSA')
 
--- Crear secuencias
-create sequence INCREMENTO_IDADMIN start with 1000 increment by 1;
-create sequence INCREMENTO_IDProveedor start with 2000 increment by 1;
-create sequence INCREMENTO_IDCondominio start with 3000 increment by 1;
-create sequence INCREMENTO_IDCasa start with 4000 increment by 1;
-create sequence INCREMENTO_IDCliente start with 5000 increment by 1;
-create sequence INCREMENTO_IDGastoMant start with 6000 increment by 1;
-create sequence INCREMENTO_IDCuotaMant start with 7000 increment by 1;
-create sequence INCREMENTO_IDRecibo start with 8000 increment by 1;
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890000,57100,'Limpieza',1000,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890001,57100,'Luz del predio',2000,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890002,57101,'Agua',2000,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890003,57100,'Conserv. áreas verders',1000,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890004,57100,'Luz áreas comunes',1000,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890005,57102,'Arbitrios',1500,DATEADD(DAY, -19, SYSDATETIME()))
+INSERT INTO [dbo].[MANTENIMIENTO]([idMantenimiento],[idProveedor],[descripcion],[totalCosto],[fecha])
+     VALUES(890006,57100,'Servicios',1000,DATEADD(DAY, -19, SYSDATETIME()))
 
-	
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890000,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890000 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890001,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890001 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890002,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890002 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890003,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890003 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890004,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890004 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890005,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890005 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300000,20000,890006,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890006 AND D.idDomicilio = 20000)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
 
-		--CAMBIAR SECUENCIAS (SI ASI SE QUISIERA) 
-
-		ALTER SEQUENCE INCREMENTO_IDADMIN RESTART WITH 1000;
-		ALTER SEQUENCE INCREMENTO_IDProveedor RESTART WITH 2000;
-		ALTER SEQUENCE INCREMENTO_IDCondominio RESTART WITH 3000;
-		ALTER SEQUENCE INCREMENTO_IDCasa RESTART WITH 4000;
-		ALTER SEQUENCE INCREMENTO_IDCliente RESTART WITH 5000;
-		ALTER SEQUENCE INCREMENTO_IDGastoMant RESTART WITH 6000;
-		ALTER SEQUENCE INCREMENTO_IDCuotaMant RESTART WITH 7000;
-		ALTER SEQUENCE INCREMENTO_IDRecibo RESTART WITH 8000;
-		
-		
-		
---TRIGGERS (ESTOS SIRVEN PARA CREAR A LOS DATOS,DONDE EL PARAMETRO DEL ID SEA "NULL")
-<
-
-create trigger TRI_ADMIN_COND
-on ADMINISTRADOR_COND
-instead of insert
-as
-begin
-  insert into ADMINISTRADOR_COND (IDAdministrador, numeroCell, correoElectronico)
-  select NEXT VALUE FOR INCREMENTO_IDADMIN, inserted.numeroCell, inserted.correoElectronico
-  from inserted;
-end;
-
-create trigger TRI_PROVEEDOR
-on PROVEEDOR
-instead of insert
-as
-begin
-  insert into PROVEEDOR (IDProveedor, nombre)
-  select NEXT VALUE FOR INCREMENTO_IDProveedor, inserted.nombre
-  from inserted;
-end;
-
-create trigger TRI_CONDOMINIO
-on CONDOMINIO
-instead of insert
-as
-begin
-  insert into CONDOMINIO (IDCondominio, IDAdministrador, nombre, categoria, direccion, numcasas)
-  select NEXT VALUE FOR INCREMENTO_IDCondominio, inserted.IDAdministrador, inserted.nombre, inserted.categoria, inserted.direccion, inserted.numcasas
-  from inserted;
-end;
-
-create trigger TRI_CASA
-on CASA
-instead of insert
-as
-begin
-  insert into CASA (IDCasa, IDCondominio, bloque, areaCasa, areaCochera, categoriaPago, habitantes, numPiso)
-  select NEXT VALUE FOR INCREMENTO_IDCasa, inserted.IDCondominio, inserted.bloque, inserted.areaCasa, inserted.areaCochera, inserted.categoriaPago, inserted.habitantes, inserted.numPiso
-  from inserted;
-end;
-
-create trigger TRI_CLIENTE
-on CLIENTE
-instead of insert
-as
-begin
-  insert into CLIENTE (IDCliente, IDCasa, nombres, apPaterno, apMaterno, dni)
-  select NEXT VALUE FOR INCREMENTO_IDCliente, inserted.IDCasa, inserted.nombres, inserted.apPaterno, inserted.apMaterno, inserted.dni
-  from inserted;
-end;
-
-create trigger TRI_GASTO_MANTENIMIENTO
-on GASTO_MANTENIMIENTO
-instead of insert
-as
-begin
-  insert into GASTO_MANTENIMIENTO (IDGastoMant, IDProveedor, numComprobante, conceptoGasto, descGasto, montoGasto)
-  select NEXT VALUE FOR INCREMENTO_IDGastoMant, inserted.IDProveedor, inserted.numComprobante, inserted.conceptoGasto, inserted.descGasto, inserted.montoGasto
-  from inserted;
-end;
-
-create trigger TRI_CUOTA_MANTENIMIENTO
-on CUOTA_MANTENIMIENTO
-instead of insert
-as
-begin
-  insert into CUOTA_MANTENIMIENTO (IDCuotaMant, montoMinimo, montoCajaChica, valorCuota, estado)
-  select NEXT VALUE FOR INCREMENTO_IDCuotaMant, inserted.montoMinimo, inserted.montoCajaChica, inserted.valorCuota, inserted.estado
-  from inserted;
-end;
-
-create trigger TRI_RECIBO_MANTENIMIENTO
-on RECIBO_MANTENIMIENTO
-instead of insert
-as
-begin
-  insert into RECIBO_MANTENIMIENTO (IDRecibo, fechaEmision, fechaVencimiento)
-  select NEXT VALUE FOR INCREMENTO_IDRecibo, inserted.fechaEmision, inserted.fechaVencimiento
-  from inserted;
-end;
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890000,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890000 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890001,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890001 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890002,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890002 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890003,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890003 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890004,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890004 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890005,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890005 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
+INSERT INTO [dbo].[RECIBO]([idRecibo],[idDomicilio],[idMantenimiento],[montoMantenimiento],[fechaEmision],[fechaVencimiento])
+     VALUES(2300001,20001,890006,
+	 (select (C.totalCosto*D.area)/230 from MANTENIMIENTO C,CASA_DEPARTAMENTO D where C.idMantenimiento = 890006 AND D.idDomicilio = 20001)
+	 ,DATEADD(DAY, -18, SYSDATETIME()),DATEADD(DAY, -13, SYSDATETIME()))
 
 
 
 
-
-
---INSERTAR DATOS
-
--- Insertar datos en PROVEEDOR
-INSERT INTO PROVEEDOR (IDProveedor, nombre)
-VALUES
-(null, 'CONDOSA'),
-(null, 'SEDAPAL'),
-(null, 'ADMINISTRACIÓN CONDOSA'),
-(null, 'TELEFONICA'),
-(null, 'ENEL');
-
---Insertar datos en ADMINISTRADOR_COND
-INSERT INTO ADMINISTRADOR_COND (IDAdministrador, numeroCell, correoElectronico)
-VALUES
-(null, 123456789, 'correo1@gmail.com'),
-(null, 987654321, 'correo2@gmail.com'),
-(null, 159482673, 'correo3@gmail.com'),
-(null, 951846237, 'correo3@gmail.com'),
-(null, 847512369, 'correo5@gmail.com');
-
--- Insertar datos en CONDOMINIO
-INSERT INTO CONDOMINIO (IDCondominio, IDAdministrador, nombre, categoria, direccion, numcasas)
-VALUES
-(null, 1000, 'Condominio A', 'P1', 'Dirección 1', 5),
-(null, 1001, 'Condominio B', 'P2', 'Dirección 2', 4),
-(null, 1002, 'Condominio C', 'P1', 'Dirección 3', 3),
-(null, 1002, 'Condominio D', 'P2', 'Dirección 4', 4),
-(null, 1004, 'Condominio E', 'P1', 'Dirección 5', 2);
+--Selects utilizados (NO ES NECESARIO CORRER PARA IMPLEMENTAR)
+select M.descripcion, P.nombre, M.totalCosto from MANTENIMIENTO M, PROVEEDOR P where P.idProveedor=M.idProveedor;
+select idCliente, nombre+' '+aPaterno+' '+aMaterno as nombreCompleto from CLIENTE;
+select ((sum(M.totalCosto)*50)/230)*0.5 from MANTENIMIENTO M, CASA_DEPARTAMENTO C;
+select sum(C.area) from CASA_DEPARTAMENTO C;
+--Costo mínimo de mantenimiento
+select CAST(((sum(M.totalCosto)/count(CL.idCliente))*0.5) AS DECIMAL(20,2)) as minimo, 10000.00 as caja from MANTENIMIENTO M, CLIENTE CL;
+select count(CL.idCliente) from CLIENTE CL;
