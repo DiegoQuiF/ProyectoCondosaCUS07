@@ -16,6 +16,6 @@ APP:
 
 
 BASE DE DATOS (SqlServer)
-1. Cree una base de datos llamada 'condosa'
+1. Cree una base de datos llamada 'E_CONDOSA'
 2. Ejecute el script para crear tablas, secuencias y triggers:
     → Script en el archivo "Script BD"
